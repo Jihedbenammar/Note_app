@@ -10,6 +10,7 @@ class CustomFloatingActionButton extends StatelessWidget {
     return FloatingActionButton(
       onPressed: () {
         showModalBottomSheet(
+            isScrollControlled: true,
             shape:
                 BeveledRectangleBorder(borderRadius: BorderRadius.circular(16)),
             context: context,
