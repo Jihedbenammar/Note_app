@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:note_app/cubit/show_note_cubit/show_note_cubit.dart';
 import 'package:note_app/widgets/custom_appbar.dart';
 import 'package:note_app/widgets/custom_text_field.dart';
 
+import '../models/note_model.dart';
+
 class EditViewBody extends StatefulWidget {
-  EditViewBody({super.key});
+  EditViewBody({super.key, required this.note});
+  final NoteModel note;
 
   @override
   State<EditViewBody> createState() => _EditViewBodyState();
@@ -28,7 +33,13 @@ class _EditViewBodyState extends State<EditViewBody> {
             const SizedBox(
               height: 45,
             ),
-            const CustomAppBar(
+            CustomAppBar(
+              onPressed: () {
+                widget.note.title = title ?? widget.note.title;
+                widget.note.subtitle = subtitle ?? widget.note.subtitle;
+                BlocProvider.of<ShowNoteCubit>(context).fetchnote();
+                Navigator.pop(context);
+              },
               title: "Edit Note",
               icon: FontAwesomeIcons.check,
             ),
@@ -37,7 +48,7 @@ class _EditViewBodyState extends State<EditViewBody> {
             ),
             CustomTextField(
               title: "title",
-              onsaved: (value) {
+              onchange: (value) {
                 title = value;
               },
             ),
@@ -45,7 +56,7 @@ class _EditViewBodyState extends State<EditViewBody> {
               height: 45,
             ),
             CustomTextField(
-              onsaved: (value) {
+              onchange: (value) {
                 subtitle = value;
               },
               title: "content",
