@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:note_app/cubit/add_note_cubit/add_note_cubit.dart';
+import 'package:note_app/cubit/show_note_cubit/show_note_cubit.dart';
 import 'package:note_app/models/note_model.dart';
 
 import 'custom_button.dart';
@@ -30,9 +32,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
           } else if (state is AddNoteSuccess) {
             isloading = true;
             Navigator.pop(context);
-          } else if (state is AddNoteFailer) {
-            print(state.error);
-          }
+            BlocProvider.of<ShowNoteCubit>(context).fetchnote();
+          } else if (state is AddNoteFailer) {}
         },
         builder: (context, state) {
           return SingleChildScrollView(
@@ -65,18 +66,21 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                   ),
                   CustomButton(
                     isloading: isloading,
-                    ontap: () async {
+                    ontap: () {
                       if (formkey.currentState!.validate()) {
                         formkey.currentState!.save();
-                        await BlocProvider.of<AddNoteCubit>(context).addnote(
+                        int index = BlocProvider.of<ShowNoteCubit>(context).x;
+                        print('index : $index');
+                        BlocProvider.of<AddNoteCubit>(context).addnote(
                             NoteModel(
                                 title: title!,
                                 subtitle: subtitle!,
-                                date: DateTime.now().toString(),
-                                color: Colors.blue.value));
+                                date: DateFormat("yyyy-mm-dd")
+                                    .format(DateTime.now()),
+                                color: index % 4));
+                        BlocProvider.of<ShowNoteCubit>(context).x++;
                       } else {
                         autovalidateMode = AutovalidateMode.always;
-                        setState(() {});
                       }
                     },
                   ),
